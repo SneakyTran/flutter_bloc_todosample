@@ -47,35 +47,16 @@ class _ViewProjectsScreenState extends State<ViewProjectsScreen> {
             children: [
               SizedBox(
                 height: 50,
-                child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: context
-                            .watch<TaskGroupProvider>()
-                            .getListTaskGroup
-                            .length +
-                        1,
-                    itemBuilder: (BuildContext context, int index) =>
-                        getListTaskGroup(
-                          context,
-                          () {
-                            setState(() => _selectedTaskGroup = index);
-                          },
-                          _selectedTaskGroup,
-                        )[index]),
               ),
               Expanded(
                 flex: 11,
                 child: Column(
-                  children: context
-                      .watch<ProjectsProvider>()
-                      .getListProjects
-                      .map((project) => CardProject(project))
-                      .toList(),
+                  children: [],
                 ),
               ),
             ],
           ),
-          Align(alignment: Alignment.bottomLeft, child: FloatingButton()),
+          const Align(alignment: Alignment.bottomLeft, child: FloatingButton()),
         ],
       ),
     );
@@ -117,42 +98,42 @@ class _ViewProjectsScreenState extends State<ViewProjectsScreen> {
         ],
       ));
 
-  List<Widget> getListTaskGroup(
-    BuildContext context,
-    VoidCallback onTap,
-    int selectedIndex,
-  ) {
-    late List<Widget> _taskGroupWidgets = [];
-    _taskGroupWidgets.add(ActingButtonWidget(
-      title: "All",
-      padding: 6,
-      width: 30,
-      titleFontSize: 16,
-      hasBoxShadow: false,
-      isActive: 0 == selectedIndex,
-      onTap: onTap,
-    ));
-
-    _taskGroupWidgets.insertAll(
-        1,
-        context
-            .watch<TaskGroupProvider>()
-            .getListTaskGroup
-            .asMap()
-            .map((index, taskGroup) => MapEntry(
-                index + 1,
-                ActingButtonWidget(
-                  title: taskGroup.groupName,
-                  padding: 6,
-                  width: 30,
-                  titleFontSize: 16,
-                  hasBoxShadow: false,
-                  isActive: index + 1 == selectedIndex,
-                  onTap: onTap,
-                )))
-            .values
-            .toList());
-
-    return _taskGroupWidgets;
-  }
+  // List<Widget> getListTaskGroup(
+  //   BuildContext context,
+  //   VoidCallback onTap,
+  //   int selectedIndex,
+  // ) {
+  //   late List<Widget> _taskGroupWidgets = [];
+  //   _taskGroupWidgets.add(ActingButtonWidget(
+  //     title: "All",
+  //     padding: 6,
+  //     width: 30,
+  //     titleFontSize: 16,
+  //     hasBoxShadow: false,
+  //     isActive: 0 == selectedIndex,
+  //     onTap: onTap,
+  //   ));
+  //
+  //   _taskGroupWidgets.insertAll(
+  //       1,
+  //       context
+  //           .watch<TaskGroupProvider>()
+  //           .getListTaskGroup
+  //           .asMap()
+  //           .map((index, taskGroup) => MapEntry(
+  //               index + 1,
+  //               ActingButtonWidget(
+  //                 title: taskGroup.groupName,
+  //                 padding: 6,
+  //                 width: 30,
+  //                 titleFontSize: 16,
+  //                 hasBoxShadow: false,
+  //                 isActive: index + 1 == selectedIndex,
+  //                 onTap: onTap,
+  //               )))
+  //           .values
+  //           .toList());
+  //
+  //   return _taskGroupWidgets;
+  // }
 }

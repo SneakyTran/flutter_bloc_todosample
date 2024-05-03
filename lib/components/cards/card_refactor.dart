@@ -32,38 +32,39 @@ class CardRefactor extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CardContainer(
-        width: 230,
-        padding: cardPadding ?? EdgeInsets.zero,
-        backgroundColor: cardColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: kTitleTextStyle,
-                ),
-                icon,
-              ],
-            ),
-            Padding(
-              padding: EdgeInsets.only(top: spaceTitleContent ?? 0),
-              child: Text(
-                "$content\n",
-                style: kContentTextStyle.copyWith(height: 1),
-                maxLines: maxLengthContent,
-                overflow: TextOverflow.ellipsis,
+      width: 230,
+      padding: cardPadding ?? EdgeInsets.zero,
+      backgroundColor: cardColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                title,
+                style: kTitleTextStyle,
               ),
+              icon,
+            ],
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: spaceTitleContent ?? 0),
+            child: Text(
+              "$content\n",
+              style: kContentTextStyle.copyWith(height: 1),
+              maxLines: maxLengthContent,
+              overflow: TextOverflow.ellipsis,
             ),
-            Padding(
-              padding: EdgeInsets.only(top: paddingCardBottom ?? 0),
-              child: bottomWidget,
-            ),
-          ],
-        ));
+          ),
+          Padding(
+            padding: EdgeInsets.only(top: paddingCardBottom ?? 0),
+            child: bottomWidget,
+          ),
+        ],
+      ),
+    );
   }
 }
 

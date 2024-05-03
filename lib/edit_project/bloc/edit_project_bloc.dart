@@ -67,6 +67,7 @@ class EditProjectBloc extends Bloc<EditProjectEvent, EditProjectState> {
       EditProjectSubmitted event, Emitter<EditProjectState> emit) async {
     //TODO: Handle loading
     emit(state.copyWith(status: EditProjectStatus.loading));
+    await Future.delayed(const Duration(seconds: 2));
 
     final project = (state.initialProject ??
             Project(
@@ -87,7 +88,6 @@ class EditProjectBloc extends Bloc<EditProjectEvent, EditProjectState> {
 
     try {
       await _projectsRepository.saveProject(project);
-      print(_projectsRepository.getListProject());
       emit(state.copyWith(status: EditProjectStatus.success));
     } catch (e) {
       emit(state.copyWith(status: EditProjectStatus.failure));

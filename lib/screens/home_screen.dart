@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todolistapp/components/buttons/acting_button_widget.dart';
@@ -9,15 +7,11 @@ import 'package:todolistapp/components/buttons/floating_button.dart';
 import 'package:todolistapp/components/cards/card_container.dart';
 import 'package:todolistapp/components/cards/card_refactor.dart';
 import 'package:todolistapp/components/cards/flash_card.dart';
-import 'package:todolistapp/components/cards/group_task_card.dart';
 import 'package:todolistapp/components/icons/icon_group.dart';
 import 'package:todolistapp/components/progresses/circle_progress.dart';
 import 'package:todolistapp/components/texts/cirlce_text.dart';
 import 'package:todolistapp/constants.dart';
-import 'package:todolistapp/models/tasks/project.dart';
 import 'package:todolistapp/models/tasks/providers/projects_provider/projects_provider.dart';
-import 'package:todolistapp/models/tasks/providers/task_group_provider/task_group_provider.dart';
-import 'package:todolistapp/models/tasks/task_group.dart';
 import 'package:todolistapp/widgets/background_add_project_widget.dart';
 import 'package:todolistapp/project_overview/project_overview.dart';
 
@@ -34,8 +28,6 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
   final String avatarPath = "assets/images/avatar.png";
   late AnimationController controller;
   final double endValue = 0.85;
-  final FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
@@ -44,45 +36,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     // initData();
   }
 
-  void initData() async {
-    final refProjects = _firebaseFirestore
-        .collection("users/${_auth.currentUser?.email}/task_groups");
-    var allProjects = <Project>[];
-    var taskGroups = <TaskGroup>[];
-    await refProjects.get().then((docSnapshot) async {
-      if (!docSnapshot.docs.isNotEmpty) {
-        return;
-      } else {
-        //get all projects
-        await _firebaseFirestore
-            .collectionGroup("projects")
-            .withConverter(
-              fromFirestore: Project.fromFirestore,
-              toFirestore: (Project project, opts) => project.toFirestore(),
-            )
-            .get()
-            .then((querySnapshot) => allProjects = querySnapshot.docs
-                .map((doc) => doc.data())
-                .toList()); //TODO: Handle empty projects
-
-        //get task group
-        await _firebaseFirestore
-            .collectionGroup("task_groups")
-            .withConverter(
-                fromFirestore: TaskGroup.fromFirestore,
-                toFirestore: (TaskGroup taskGroup, opts) =>
-                    taskGroup.toFirestoreIncludeProjects())
-            .get()
-            .then((querySnapshot) => taskGroups =
-                querySnapshot.docs.map((doc) => doc.data()).toList());
-      }
-    });
-    for (var taskgroup in taskGroups) {
-      print(taskgroup.listProjects);
-    }
-    TaskGroupProvider().loadData(taskGroups);
-    ProjectsProvider().loadData(allProjects);
-  }
+  //Handling firebase
+  // void initData() async {
+  //   final refProjects = _firebaseFirestore
+  //       .collection("users/${_auth.currentUser?.email}/task_groups");
+  //   var allProjects = <Project>[];
+  //   var taskGroups = <TaskGroup>[];
+  //   await refProjects.get().then((docSnapshot) async {
+  //     if (!docSnapshot.docs.isNotEmpty) {
+  //       return;
+  //     } else {
+  //       //get all projects
+  //       await _firebaseFirestore
+  //           .collectionGroup("projects")
+  //           .withConverter(
+  //             fromFirestore: Project.fromFirestore,
+  //             toFirestore: (Project project, opts) => project.toFirestore(),
+  //           )
+  //           .get()
+  //           .then((querySnapshot) => allProjects = querySnapshot.docs
+  //               .map((doc) => doc.data())
+  //               .toList()); //TODO: Handle empty projects
+  //
+  //       //get task group
+  //       await _firebaseFirestore
+  //           .collectionGroup("task_groups")
+  //           .withConverter(
+  //               fromFirestore: TaskGroup.fromFirestore,
+  //               toFirestore: (TaskGroup taskGroup, opts) =>
+  //                   taskGroup.toFirestoreIncludeProjects())
+  //           .get()
+  //           .then((querySnapshot) => taskGroups =
+  //               querySnapshot.docs.map((doc) => doc.data()).toList());
+  //     }
+  //   });
+  //   for (var taskgroup in taskGroups) {
+  //     print(taskgroup.listProjects);
+  //   }
+  //   TaskGroupProvider().loadData(taskGroups);
+  //   ProjectsProvider().loadData(allProjects);
+  // }
 
   @override
   void dispose() {
@@ -367,45 +360,46 @@ class _HomeScreenState extends State<HomeScreen> with TickerProviderStateMixin {
     );
   }
 
-  List<Widget> loadListProgressTaskGroup(BuildContext context) => context
-      .watch<TaskGroupProvider>()
-      .getListTaskGroup
-      .map((taskGroup) => GroupTaskCard(
-            title: taskGroup.groupName,
-            taskTotalNumber: taskGroup.listProjects?.length ?? 0,
-            taskProgressValue: Random().nextDouble() * 100,
-            iconGroup: taskGroup.iconGroup,
-            color: taskGroup.iconGroup.iconColor,
-          ))
-      .toList();
+  //Load data from Provider with NotifyChange
+  // List<Widget> loadListProgressTaskGroup(BuildContext context) => context
+  //     .watch<TaskGroupProvider>()
+  //     .getListTaskGroup
+  //     .map((taskGroup) => GroupTaskCard(
+  //           title: taskGroup.groupName,
+  //           taskTotalNumber: taskGroup.listProjects?.length ?? 0,
+  //           taskProgressValue: Random().nextDouble() * 100,
+  //           iconGroup: taskGroup.iconGroup,
+  //           color: taskGroup.iconGroup.iconColor,
+  //         ))
+  //     .toList();
 
-  List<Widget> loadInProgressProject(BuildContext context) => context
-      .watch<ProjectsProvider>()
-      .getListProjects
-      .map((project) => Padding(
-            padding: const EdgeInsets.only(left: 12.0),
-            child: CardRefactor(
-              title: project.projectName,
-              content: project.description,
-              cardColor: kCardColorBlue,
-              spaceTitleContent: 10,
-              icon: IconGroup(
-                //TODO: handle load icon here!!
-                icon: Icons.work,
-                iconColor: kColorIconPink,
-              ),
-              paddingCardBottom: 10,
-              bottomWidget: ClipRect(
-                child: LinearProgressIndicator(
-                  borderRadius: BorderRadius.circular(10),
-                  value: 0.7,
-                  backgroundColor: Colors.white,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(kColorLinearProgress),
-                  minHeight: 7,
-                ),
-              ),
-            ),
-          ))
-      .toList();
+  // List<Widget> loadInProgressProject(BuildContext context) => context
+  //     .watch<ProjectsProvider>()
+  //     .getListProjects
+  //     .map((project) => Padding(
+  //           padding: const EdgeInsets.only(left: 12.0),
+  //           child: CardRefactor(
+  //             title: project.projectName,
+  //             content: project.description,
+  //             cardColor: kCardColorBlue,
+  //             spaceTitleContent: 10,
+  //             icon: IconGroup(
+  //               //TODO: handle load icon here!!
+  //               icon: Icons.work,
+  //               iconColor: kColorIconPink,
+  //             ),
+  //             paddingCardBottom: 10,
+  //             bottomWidget: ClipRect(
+  //               child: LinearProgressIndicator(
+  //                 borderRadius: BorderRadius.circular(10),
+  //                 value: 0.7,
+  //                 backgroundColor: Colors.white,
+  //                 valueColor:
+  //                     const AlwaysStoppedAnimation<Color>(kColorLinearProgress),
+  //                 minHeight: 7,
+  //               ),
+  //             ),
+  //           ),
+  //         ))
+  //     .toList();
 }

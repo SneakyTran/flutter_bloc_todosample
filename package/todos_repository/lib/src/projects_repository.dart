@@ -12,4 +12,9 @@ class ProjectsRepository {
       _projectsApi.saveProjects(project);
   Future<void> deleteProject(String id) => _projectsApi.deleteProjects(id);
   Future<void> deleteAllProject() => _projectsApi.deleteAllProjects();
+  Future<void> addTask(String projectId, Task task) =>
+      _projectsApi.saveTask(projectId, task);
+  Future<void> changeTaskStatus(
+          String projectId, String taskId, TaskStatus status) =>
+      _projectsApi.changeTaskStatus(projectId, taskId, status);
 }

@@ -6,8 +6,9 @@ import 'package:todos_api/todos_api.dart';
 import '../models/models.dart';
 
 class ProjectWidget extends StatelessWidget {
-  const ProjectWidget({super.key, required this.project});
+  const ProjectWidget({super.key, required this.project, this.onTap});
   final Project project;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -15,26 +16,29 @@ class ProjectWidget extends StatelessWidget {
         GroupStyleEnum.getGroupStyleEnum(project.group) ?? GroupStyleEnum.work;
     return Padding(
       padding: const EdgeInsets.only(left: 12.0),
-      child: CardRefactor(
-        title: project.name,
-        content: project.description,
-        maxLengthContent: 2,
-        cardColor: kCardColorBlue,
-        spaceTitleContent: 10,
-        icon: IconGroup(
-          //TODO: handle load icon here!!
-          icon: group.icon,
-          iconColor: group.color,
-        ),
-        paddingCardBottom: 10,
-        bottomWidget: ClipRect(
-          child: LinearProgressIndicator(
-            borderRadius: BorderRadius.circular(10),
-            value: 0.7,
-            backgroundColor: Colors.white,
-            valueColor:
-                const AlwaysStoppedAnimation<Color>(kColorLinearProgress),
-            minHeight: 7,
+      child: GestureDetector(
+        onTap: onTap,
+        child: CardRefactor(
+          title: project.name,
+          content: project.description,
+          maxLengthContent: 2,
+          cardColor: kCardColorBlue,
+          spaceTitleContent: 10,
+          icon: IconGroup(
+            //TODO: handle load icon here!!
+            icon: group.icon,
+            iconColor: group.color,
+          ),
+          paddingCardBottom: 10,
+          bottomWidget: ClipRect(
+            child: LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(10),
+              value: 0.7,
+              backgroundColor: Colors.white,
+              valueColor:
+                  const AlwaysStoppedAnimation<Color>(kColorLinearProgress),
+              minHeight: 7,
+            ),
           ),
         ),
       ),

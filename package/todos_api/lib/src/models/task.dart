@@ -11,6 +11,24 @@ enum TaskStatus {
   inProgress,
 }
 
+extension TaskStatusDisplay on TaskStatus {
+  String getTaskStatus() {
+    switch (this) {
+      case TaskStatus.todo:
+        return "To do";
+
+      case TaskStatus.done:
+        return "Done";
+
+      case TaskStatus.inProgress:
+        return "In progress";
+
+      default:
+        return "";
+    }
+  }
+}
+
 @JsonSerializable()
 class Task extends Equatable {
   Task({

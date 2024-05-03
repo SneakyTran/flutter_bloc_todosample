@@ -3,20 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todolistapp/project_overview/bloc/project_overview_bloc.dart';
 import 'package:todolistapp/project_overview/widgets/project_widget.dart';
-import 'package:todos_repository/todos_repository.dart';
+import 'package:todolistapp/screens/today_tasks_screen.dart';
+import 'package:todolistapp/screens/view_projects_screen.dart';
 
 class ProjectOverviewPage extends StatelessWidget {
   const ProjectOverviewPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    print("homepage is building!!");
-    return BlocProvider(
-      create: (context) => ProjectOverviewBloc(
-        projectsRepository: context.read<ProjectsRepository>(),
-      )..add(ProjectsOverviewSubscriptionRequested()),
-      child: const ProjectOverviewView(),
-    );
+    return const ProjectOverviewView();
   }
 }
 
@@ -26,7 +21,10 @@ class ProjectOverviewView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<ProjectOverviewBloc, ProjectOverViewState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        print("changes");
+      },
+      listenWhen: (previous, current) => previous.status != current.status,
       child: BlocBuilder<ProjectOverviewBloc, ProjectOverViewState>(
         builder: (context, state) {
           if (state.status == ProjectOverViewStatus.loading) {
@@ -40,7 +38,6 @@ class ProjectOverviewView extends StatelessWidget {
               return const Center(child: Text("There is no task"));
             }
           }
-          print("re-render");
 
           return CupertinoScrollbar(
             child: ListView(
@@ -48,6 +45,10 @@ class ProjectOverviewView extends StatelessWidget {
               children: state.projects
                   .map((project) => ProjectWidget(
                         project: project,
+                        onTap: () => Navigator.pushNamed(
+                          context,
+                          TodayTasksScreen.id,
+                        ),
                       ))
                   .toList(),
             ),

@@ -15,6 +15,7 @@ class ActingButtonWidget extends StatelessWidget {
     this.isActive = false,
     this.titleFontSize = 22,
     this.buttonHeight = 63,
+    this.isLoading = false,
   });
   final String title;
   final VoidCallback onTap;
@@ -26,6 +27,7 @@ class ActingButtonWidget extends StatelessWidget {
   final bool isActive;
   final double titleFontSize;
   final double buttonHeight;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -46,14 +48,19 @@ class ActingButtonWidget extends StatelessWidget {
               child: Stack(
                 children: [
                   Center(
-                    child: Text(
-                      title,
-                      style: kTextButtonStyle.copyWith(
-                          fontSize: titleFontSize,
-                          color: !isActive
-                              ? kColorButton.withOpacity(0.8)
-                              : Colors.white),
-                    ),
+                    child: isLoading
+                        ? const CircularProgressIndicator(
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          )
+                        : Text(
+                            title,
+                            style: kTextButtonStyle.copyWith(
+                                fontSize: titleFontSize,
+                                color: !isActive
+                                    ? kColorButton.withOpacity(0.8)
+                                    : Colors.white),
+                          ),
                   ),
                   if (hasIcon)
                     const Padding(

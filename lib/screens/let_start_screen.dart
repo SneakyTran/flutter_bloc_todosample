@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 import 'package:todolistapp/components/buttons/acting_button_widget.dart';
 import 'package:todolistapp/components/shapes/circle_blur_shape.dart';
 import 'package:todolistapp/constants.dart';
-import 'package:todolistapp/edit_project/view/edit_project_page.dart';
-import 'package:todolistapp/models/tasks/providers/input_provider/add_project_input_provider.dart';
 import 'package:todolistapp/screens/home_screen.dart';
-import 'package:todolistapp/screens/login_screen.dart';
 import 'package:todolistapp/widgets/main_background_widget.dart';
-import 'package:todos_repository/todos_repository.dart';
 
 class LetStartScreen extends StatelessWidget {
   static String id = "/";

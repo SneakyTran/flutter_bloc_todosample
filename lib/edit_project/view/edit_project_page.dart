@@ -21,6 +21,7 @@ class EditProjectPage extends StatelessWidget {
 
   static Route<void> route({Project? initialProject}) {
     return MaterialPageRoute(
+      fullscreenDialog: true,
       builder: (_) => BlocProvider(
         create: (context) => EditProjectBloc(
           projectsRepository: context.read<ProjectsRepository>(),
@@ -35,6 +36,9 @@ class EditProjectPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<EditProjectBloc, EditProjectState>(
       listener: (context, state) {
+        context
+            .read<ProjectOverviewBloc>()
+            .add(const ProjectsOverviewSubscriptionRequested());
         Navigator.of(context).pop();
       },
       listenWhen: (prev, current) =>
@@ -50,6 +54,7 @@ class EditProjectView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final status = context.select((EditProjectBloc bloc) => bloc.state.status);
     // final isNewTask =
     //     context.select((EditProjectBloc bloc) => bloc.state.isNewProject);
     return Scaffold(
@@ -107,13 +112,14 @@ class EditProjectView extends StatelessWidget {
                   child: GestureDetector(
                     child: ActingButtonWidget(
                       title: "Add Project",
+                      isLoading: status.isLoadingOrSuccess,
                       isActive: true,
                       hasBoxShadow: true,
-                      onTap: () {
-                        context
-                            .read<EditProjectBloc>()
-                            .add(const EditProjectSubmitted());
-                      },
+                      onTap: status.isLoadingOrSuccess
+                          ? () => {}
+                          : () => context.read<EditProjectBloc>().add(
+                                const EditProjectSubmitted(),
+                              ),
                     ),
                   ),
                 ),

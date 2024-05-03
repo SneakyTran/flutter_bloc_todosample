@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:todos_api/todos_api.dart';
 
 class LocalStorageTodosApi extends ProjectsApi {
+  final _todoStreamController = BehaviorSubject<List<Project>>.seeded(const []);
   LocalStorageTodosApi({required SharedPreferences plugin}) : _plugin = plugin {
     _init();
   }
@@ -13,7 +14,6 @@ class LocalStorageTodosApi extends ProjectsApi {
   Future<void> _setValue(String key, String value) =>
       _plugin.setString(key, value);
   final SharedPreferences _plugin;
-  final _todoStreamController = BehaviorSubject<List<Project>>.seeded(const []);
 
   static const kTodosCollectionKey = '__todos_collection_key__';
 
@@ -51,6 +51,7 @@ class LocalStorageTodosApi extends ProjectsApi {
       //TODO: Handle Create New Project
       projects.add(project);
     }
+    _todoStreamController.add(projects);
     return _setValue(kTodosCollectionKey, json.encode(projects));
   }
 
@@ -72,5 +73,34 @@ class LocalStorageTodosApi extends ProjectsApi {
   Future<void> deleteAllProjects() {
     // TODO: implement deleteAllProjects
     return _setValue(kTodosCollectionKey, "");
+  }
+
+  @override
+  Future<void> saveTask(String projectId, Task task) {
+    // TODO: implement addTask
+    final projects = [..._todoStreamController.value];
+    final indexFound = projects.indexWhere((p) => p.id == projectId);
+    if (indexFound == -1) {
+      throw ProjectsNotFoundException();
+    } else {
+      //TODO: Handle add new task
+      final tasks = [...projects[indexFound].tasks];
+      final taskFoundIndex =
+          tasks.indexWhere((element) => element.id == task.id);
+      if (taskFoundIndex == -1) {
+        tasks.add(task);
+      } else {
+        tasks[taskFoundIndex] = task;
+      }
+    }
+    _todoStreamController.add(projects);
+    return _setValue(kTodosCollectionKey, json.encode(projects));
+  }
+
+  @override
+  Future<void> changeTaskStatus(
+      String projectId, String taskId, TaskStatus status) {
+    // TODO: implement changeTaskStatus
+    throw UnimplementedError();
   }
 }
